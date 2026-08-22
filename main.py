@@ -32,7 +32,7 @@ async def word_streamer():
         "respond",
         "progressively"
     ]
-    for  word in words:
+    for  word in Words:
         yield word + " "
         await asyncio.sleep(0.5)
 @app.get("/stream")
