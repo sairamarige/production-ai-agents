@@ -1,4 +1,6 @@
+import asyncio
 from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 app=FastAPI(title="AI Question API")
@@ -18,3 +20,22 @@ def ask_ai(request:AskRequest):
     return {"question": request.question,
         "answer": answer
     }
+async def word_streamer():
+    Words=[
+        "AI",
+        "agents",
+        "are",
+        "powerful",
+        "when",
+        "they",
+        "can",
+        "respond",
+        "progressively"
+    ]
+    for  word in words:
+        yield word + " "
+        await asyncio.sleep(0.5)
+@app.get("/stream")
+def stream_words():
+    return StreamingResponse(word_streamer(),media_type="text/plain")
+    
