@@ -11,12 +11,13 @@ app=FastAPI(title="AI Question API")
 class AskRequest(BaseModel):
     question:str 
 
-def get_ai_answer(question: str) ->str:
+async def get_ai_answer(question: str) ->str:
     """
     Placeholder for real AI logic.
     Later, replace this with an actual LLM call
     (e.g. OpenAI, Anthropic, local model, etc.).
     """
+    await asyncio.sleep(1)
     return f"This is answer for:{question}"
 
 
@@ -25,8 +26,8 @@ def home():
     return {"message":"AI API is running"}
 
 @app.post("/ask")
-def ask_ai(request:AskRequest):
-    answer=get_ai_answer(request.question)
+async def ask_ai(request:AskRequest):
+    answer=await get_ai_answer(request.question)
     return {"question": request.question,
         "answer": answer
     }
@@ -87,5 +88,15 @@ async def ask_stream(question:str):
         lambda:save_log(question, "".join(collected))
     )
     return response
+@app.get("/multi-task")
+async def multi_task():
+    results=await asyncio.gather(
+        get_ai_answer("explain Ai"),
+        get_ai_answer("Explain loop engineering"),
+        get_ai_answer("Explain RAG"),
+    )
+    return {
+        "results":results
+    }
 
 
