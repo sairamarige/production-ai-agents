@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime
 
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from starlette.background import BackgroundTask
@@ -98,5 +98,48 @@ async def multi_task():
     return {
         "results":results
     }
+
+class ConnectionManager:
+    """
+    Tracks active WebSocket connections. With a single client this is
+    overkill, but it's the standard shape you need the moment you support
+    broadcast, multiple rooms, or just want clean logging of who's
+    connected. Kept intentionally small.
+    """
+    def __init__(self):
+        self.active_connections:list[WebSocket] =[]
+    async def connect(self,websocket:Websocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+        print(f"[connect] client joined. total={len(self.active_connections)}")
+    def disconnect(self,websocket:WebSocket):
+        if websocket in self.active_connections:
+            self.active_connections.remove(websocket)
+        print(f"[disconnect] client left. total={len(self.active_connections)}")
+manager=ConnectionManager()
+@app.websocket("/ws/chat")
+async def websocket_chat(websocket:WebSocket):
+    await manager.connect(websocket)
+
+    try:
+        await websocket.send_text("Connected.Send a Question to begin.")
+        while True:
+            question=await websocket.receive_text()
+            print(f"[received]{question!r}")
+            if not question.strip():
+                await websocket.send_text("please send a non empty question")
+                continue
+            answer=await get_ai_answer(question)
+            await websocket.send_text(answer)
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+    except Exception as exc:
+        print(f"[error] unexpected Websocket error:{exc}")
+        manager.disconnect(websocket)
+
+
+
+
+   
 
 
