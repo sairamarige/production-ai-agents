@@ -2,4 +2,6 @@ fastapi
 uvicorn
 websockets
 groq
-dotenv
+python-dotenv
+pydantic
+pydantic-settings
