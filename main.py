@@ -4,9 +4,38 @@ from datetime import datetime
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from starlette.background import BackgroundTask
 
-app=FastAPI(title="AI Question API")
+
+# ---------------------------------------------------------------------------
+# Settings
+# ---------------------------------------------------------------------------
+class Settings(BaseSettings):
+    """
+    Application settings, loaded from environment variables / .env file.
+
+    NOTE: api_key is read internally (reserved for future auth on these
+    endpoints) but must never be exposed through any API response.
+    """
+    app_name: str = "AI Question API"
+    debug: bool = False
+    ai_model: str = "demo-model"
+    api_key: str = ""
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+
+
+settings = Settings()
+
+app = FastAPI(title=settings.app_name)
+
+
+class ConfigResponse(BaseModel):
+    app_name: str
+    debug: bool
+    model: str
+
 
 class AskRequest(BaseModel):
     question:str 
@@ -18,12 +47,24 @@ async def get_ai_answer(question: str) ->str:
     (e.g. OpenAI, Anthropic, local model, etc.).
     """
     await asyncio.sleep(1)
-    return f"This is answer for:{question}"
+    return f"[{settings.ai_model}] This is answer for:{question}"
 
 
 @app.get("/")
 def home():
     return {"message":"AI API is running"}
+
+@app.get("/config", response_model=ConfigResponse)
+def get_config():
+    """
+    Expose safe, non-sensitive configuration values.
+    api_key is intentionally excluded from this response.
+    """
+    return ConfigResponse(
+        app_name=settings.app_name,
+        debug=settings.debug,
+        model=settings.ai_model,
+    )
 
 @app.post("/ask")
 async def ask_ai(request:AskRequest):
@@ -136,10 +177,3 @@ async def websocket_chat(websocket:WebSocket):
     except Exception as exc:
         print(f"[error] unexpected Websocket error:{exc}")
         manager.disconnect(websocket)
-
-
-
-
-   
-
-
