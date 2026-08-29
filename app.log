@@ -1,0 +1,31 @@
+2026-08-29 06:46:31 | DEBUG | __main__ | This is a DEBUG message - detailed internal info for developers
+2026-08-29 06:46:31 | INFO | __main__ | This is an INFO message - normal application event
+2026-08-29 06:46:31 | WARNING | __main__ | This is a WARNING message - something unexpected, but not fatal
+2026-08-29 06:46:31 | ERROR | __main__ | This is an ERROR message - an operation failed
+2026-08-29 06:46:31 | CRITICAL | __main__ | This is a CRITICAL message - the app may be unable to continue
+2026-08-29 06:46:31 | ERROR | __main__ | Calculation failed
+Traceback (most recent call last):
+  File "C:\Users\saira\Downloads\projects of ai\ai fastapi\logging_demo.py", line 27, in demonstrate_exception_logging
+    result = 10 / 0
+             ~~~^~~
+ZeroDivisionError: division by zero
+2026-08-29 06:46:31 | INFO | __main__ | logging_demo.py finished running - check the console and app.log
+2026-08-29 06:47:14 | INFO | main | Application started
+2026-08-29 06:48:14 | INFO | main | Application shutting down
+2026-08-29 06:48:31 | INFO | main | Application started
+2026-08-29 06:49:17 | INFO | main | Application shutting down
+2026-08-29 06:49:24 | INFO | main | Application started
+2026-08-29 06:54:49 | INFO | main | Application shutting down
+2026-08-29 06:54:55 | INFO | main | Application started
+2026-08-29 06:55:58 | INFO | main | Application shutting down
+2026-08-29 06:56:05 | INFO | main | Application started
+2026-08-29 06:56:08 | INFO | main | Application shutting down
+2026-08-29 06:56:13 | INFO | main | Application started
+2026-08-29 06:56:14 | INFO | main | Application shutting down
+2026-08-29 06:56:17 | INFO | main | Application started
+2026-08-29 06:56:26 | INFO | main | Application shutting down
+2026-08-29 06:56:31 | INFO | main | Application started
+2026-08-29 06:56:50 | INFO | main | Application shutting down
+2026-08-29 06:56:53 | INFO | main | Application started
+2026-08-29 06:57:07 | INFO | main | Application shutting down
+2026-08-29 06:57:11 | INFO | main | Application started
